@@ -1,0 +1,25 @@
+#
+# kubectl -n k8s-spark apply -f setup/aks/volumes/fileshare/az-volume-pod.yaml
+#
+apiVersion: v1
+kind: Pod
+metadata:
+  name: azure-nginx
+spec:
+  containers:
+    - image: docker.io/nginx:latest
+      name: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - name: azure-fileshare
+          mountPath: "/usr/share/nginx/html"
+  volumes:
+    - name: azure-fileshare
+      azureFile:
+        # Replace with your secret name
+        secretName: az-storage-secret
+        # Replace with correct storage share name
+        shareName: azure-file-share/nginx
+        readOnly: false

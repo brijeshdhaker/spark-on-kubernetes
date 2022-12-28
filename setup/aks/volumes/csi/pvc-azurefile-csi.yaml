@@ -1,0 +1,16 @@
+#
+# kubectl -n k8s-spark apply -f setup/aks/volumes/csi/pvc-azurefile-csi.yaml
+#
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-azurefile
+  namespace: k8s-spark
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: azurefile-csi

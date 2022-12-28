@@ -1,0 +1,31 @@
+#
+# kubectl -n k8s-spark apply -f setup/aks/volumes/fileshare/azure-fileshare-pv.yaml
+#
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: az-fs-volume
+  namespace: k8s-spark
+  # The label is used for matching the exact claim
+  labels:
+    usage: az-fs-storage
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azure-file-sc
+  azureFile:
+    # Replace with your secret name
+    secretName: az-storage-secret
+    # Replace with correct storage share name
+    shareName: azure-file-share
+    # In case the secret is stored in a different namespace
+    #secretNamespace: default
+    readOnly: false
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - mfsymlinks
+    - actimeo=30

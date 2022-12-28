@@ -1,0 +1,38 @@
+#
+# kubectl -n k8s-spark apply -f setup/aks/volumes/csi/pv-azurefile-csi.yaml
+#
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-azurefile
+  namespace: k8s-spark
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain  # if set as "Delete" file share would be removed in pvc deletion
+  storageClassName: azurefile-csi
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks
+    - cache=strict  # https://linux.die.net/man/8/mount.cifs
+    - nosharesock
+  csi:
+    driver: file.csi.azure.com
+    readOnly: false
+    # make sure volumeid is unique for every identical share in the cluster
+    # `#` is not allowed in self defined volumeHandle
+    volumeHandle: unique-volumeid
+    volumeAttributes:
+      # optional, only set this when storage account is not in the same resource group as agent node
+      resourceGroup: "cloud-shell-storage-centralindia"
+      # only file share name, don't use full path
+      shareName: "azure-file-share"
+    nodeStageSecretRef:
+      name: az-storage-secret
+      namespace: k8s-spark

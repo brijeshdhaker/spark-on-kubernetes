@@ -1,0 +1,23 @@
+#
+# kubectl -n k8s-spark apply -f setup/aks/volumes/fileshare/azure-busybox.yaml
+#
+apiVersion: v1
+kind: Pod
+metadata:
+  name: azure-busybox
+  namespace: k8s-spark
+spec:
+  containers:
+    - image: busybox
+      command:
+        - sh
+        - -c
+        - 'while true; do date > /mnt/index.html; hostname >> /mnt/index.html; sleep $(($RANDOM % 5 + 5)); done'
+      name: busybox
+      volumeMounts:
+        - name: azure
+          mountPath: /mnt/az_fileshare
+  volumes:
+    - name: azure
+      persistentVolumeClaim:
+        claimName: az-fs-claim

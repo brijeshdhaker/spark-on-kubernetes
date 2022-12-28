@@ -1,0 +1,59 @@
+#
+# kubectl -n k8s-spark apply -f setup/local/history-server/spark-history-server.yaml
+#
+
+# Create a service for a pod valid-pod, which serves on port 444 with the name "frontend"
+# kubectl -n k8s-spark expose pod spark-historyserver --port=18080 --name=spark-historyserver --type=LoadBalancer
+# kubectl -n k8s-spark exec -it spark-historyserver -- 'ls -lart /mnt/nfs_share/spark/history-server/logs'
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spark-historyserver
+  namespace: k8s-spark
+  labels:
+    name: spark-historyserver
+spec:
+  securityContext:
+    runAsUser: 185
+    runAsGroup: 0
+    fsGroup: 0
+    fsGroupChangePolicy: "OnRootMismatch"
+  containers:
+    - image: docker.io/brijeshdhaker/spark-historyserver:3.1.2-k8s
+      name: historyserver
+      imagePullPolicy: Never
+      env:
+        - name: HISTORY_SERVER_LOGDIR
+          value: "/mnt/nfs_share/spark/history-server/logs"
+        - name: WORKLOAD
+          valueFrom:
+            configMapKeyRef:
+              name: spark-configs
+              key: workload
+      ports:
+        - containerPort: 18080
+          name: "historyserver"
+      volumeMounts:
+        - name: history-pvc
+          mountPath: /mnt/nfs_share
+          readOnly: false
+        - name: spark-configs-volume
+          mountPath: /opt/spark/conf
+          readOnly: true
+#        - name: history-server-vol
+#          mountPath: /mnt/nfs_share
+  volumes:
+    - name: history-pvc
+      nfs:
+        path: /mnt/nfs_share
+        server: 192.168.122.1
+    - name: spark-configs-volume
+      configMap:
+        name: spark-configs
+        items:
+          - key: spark-defaults.conf
+            path: spark-defaults.conf
+#    - name: history-server-vol
+#      persistentVolumeClaim:
+#        claimName: local-nfs-pvc

@@ -1,0 +1,20 @@
+#
+# kubectl -n k8s-spark apply -f setup/aks/volumes/fileshare/azure-fileshare-pvc.yaml
+#
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: az-fs-claim
+  namespace: k8s-spark
+spec:
+  storageClassName: azure-file-sc
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: "az-fs-volume"
+  selector:
+    # To make sure we match the claim with the exact volume, match the label
+    matchLabels:
+      usage: az-fs-storage
