@@ -1,0 +1,17 @@
+#
+# kubectl apply -f setup/local/volumes/hostpath/local-hostpath-pvc.yaml
+#
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-hostpath-pvc
+  namespace: k8s-spark
+spec:
+  storageClassName: manual
+  volumeName: "local-hostpath-pv"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi

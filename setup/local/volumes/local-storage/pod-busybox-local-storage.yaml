@@ -1,0 +1,28 @@
+#
+# kubectl apply -f setup/local/volumes/local-storage/pod-busybox-local-storage.yaml
+# kubectl exec -it pod-busybox-local-storage -- ls /mnt/local-share
+#
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-busybox-local-storage
+spec:
+  securityContext: {}
+  containers:
+  - image: busybox
+    securityContext:
+      privileged: true
+    command:
+      - sh
+      - -c
+      - 'while true; do date > /mnt/index.html; hostname >> /mnt/index.html; sleep $(($RANDOM % 5 + 5)); done'
+    imagePullPolicy: IfNotPresent
+    name: busybox
+    volumeMounts:
+      - mountPath: /mnt/local-share
+        name: local-storage-vol
+  volumes:
+    - name: local-storage-vol
+      persistentVolumeClaim:
+        claimName: "local-storage-pvc"

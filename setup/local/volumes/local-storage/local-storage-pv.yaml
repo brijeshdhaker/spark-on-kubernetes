@@ -1,0 +1,28 @@
+#
+# kubectl -n k8s-spark apply -f setup/local/volumes/local-storage/local-storage-pv.yaml
+#
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage-pv
+  namespace: k8s-spark
+spec:
+  capacity:
+    storage: 100Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  # It will not be automatically deleted when a user deletes claim
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /mnt/local-share
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - thinkpad

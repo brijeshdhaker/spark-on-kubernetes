@@ -1,0 +1,13 @@
+#
+# kubectl apply -f setup/local/volumes/ssd-hostpath-sc.yaml
+#
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ssd-hostpath
+provisioner: microk8s.io/hostpath
+reclaimPolicy: Delete
+parameters:
+  pvDir: /mnt/ssd-share
+volumeBindingMode: WaitForFirstConsumer

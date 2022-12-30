@@ -1,0 +1,21 @@
+#
+# kubectl apply -f setup/local/volumes/hostpath/local-hostpath-pv.yaml
+#
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-hostpath-pv
+  namespace: k8s-spark
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  # It will not be automatically deleted when a user deletes claim
+  persistentVolumeReclaimPolicy: Retain
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/hostpath-share"

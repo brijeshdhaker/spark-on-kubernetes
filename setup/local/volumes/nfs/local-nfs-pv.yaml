@@ -1,6 +1,7 @@
 #
-# kubectl -n k8s-spark apply -f setup/local/volumes/local-nfs-pv.yaml
+# kubectl -n k8s-spark apply -f setup/local/volumes/nfs/local-nfs-pv.yaml
 #
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -12,6 +13,8 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - nfsvers=4.2
   nfs:
     path: /mnt/nfs_share
     server: 192.168.122.1

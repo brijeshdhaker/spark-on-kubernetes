@@ -1,0 +1,17 @@
+#
+# kubectl -n k8s-spark apply -f setup/local/volumes/local-storage/local-storage-pvc.yaml
+#
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: local-storage-pvc
+  namespace: k8s-spark
+spec:
+  storageClassName: local-storage
+  volumeName: local-storage-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
