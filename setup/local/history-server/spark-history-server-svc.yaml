@@ -1,24 +1,22 @@
 #
-#
+# kubectl -n k8s-spark apply -f setup/local/history-server/spark-history-server-svc.yaml
 #
 ---
 apiVersion: v1
-items:
-- apiVersion: v1
-  kind: Service
-  metadata:
-    creationTimestamp: "2022-12-28T05:58:19Z"
-    labels:
-      name: spark-historyserver
+kind: Service
+metadata:
+  creationTimestamp: "2022-12-28T05:58:19Z"
+  labels:
     name: spark-historyserver
-    namespace: k8s-spark
-  spec:
-    ports:
-    - nodePort: 32512
-      port: 18080
-      protocol: TCP
-      targetPort: 18080
-    selector:
-      name: spark-historyserver
-    sessionAffinity: None
-    type: LoadBalancer
+  name: spark-historyserver
+  namespace: k8s-spark
+spec:
+  ports:
+  - nodePort: 32512
+    port: 18080
+    protocol: TCP
+    targetPort: 18080
+  selector:
+    name: spark-historyserver
+  sessionAffinity: None
+  type: LoadBalancer

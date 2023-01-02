@@ -22,10 +22,8 @@ spec:
   containers:
     - image: docker.io/brijeshdhaker/spark-historyserver:3.1.2-k8s
       name: historyserver
-      imagePullPolicy: Never
+      imagePullPolicy: Always
       env:
-        - name: HISTORY_SERVER_LOGDIR
-          value: "/mnt/nfs_share/spark/history-server/logs"
         - name: WORKLOAD
           valueFrom:
             configMapKeyRef:
@@ -35,25 +33,25 @@ spec:
         - containerPort: 18080
           name: "historyserver"
       volumeMounts:
-        - name: history-pvc
-          mountPath: /mnt/nfs_share
+        - name: history-server-vol
+          mountPath: /opt/spark/logs
           readOnly: false
-        - name: spark-configs-volume
-          mountPath: /opt/spark/conf
-          readOnly: true
+#        - name: spark-configs-volume
+#          mountPath: /opt/spark/conf
+#          readOnly: true
 #        - name: history-server-vol
 #          mountPath: /mnt/nfs_share
   volumes:
-    - name: history-pvc
+    - name: history-server-vol
       nfs:
-        path: /mnt/nfs_share
+        path: /mnt/nfs_share/spark/history-server/logs
         server: 192.168.122.1
-    - name: spark-configs-volume
-      configMap:
-        name: spark-configs
-        items:
-          - key: spark-defaults.conf
-            path: spark-defaults.conf
+#    - name: spark-configs-volume
+#      configMap:
+#        name: spark-configs
+#        items:
+#          - key: spark-defaults.conf
+#            path: spark-defaults.conf
 #    - name: history-server-vol
 #      persistentVolumeClaim:
 #        claimName: local-nfs-pvc
